@@ -12,15 +12,13 @@ const {addAction} = wp.hooks;
 class NofmMetadata extends Component{
 	constructor(props){
 		super(props);
-
 		this.handleInputValue = this.handleInputValue.bind(this);
-
 		this.state={
-			_id_youtube: {
+			_id_youtube:{
 				key: '',
 				value: ''
 			},
-			_id_vimeo: {
+			_id_vimeo:{
 				key: '',
 				value: ''
 			}
@@ -83,7 +81,7 @@ class NofmMetadata extends Component{
 					<PanelBody>
 
 						<label for="_id_youtbe">Id de Youtube</label><br/>
-						<input type="text" name="_id_youtbe" value={this.state._id_youtube.value} onChange={this.handleInputValue} /><br/>
+						<input type="text" name="_id_youtube" value={this.state._id_youtube.value} onChange={this.handleInputValue} /><br/>
 
 						<label for="_id_vimeo">Id de Vimeo</label><br/>
 						<input type="text" name="_id_vimeo" value={this.state._id_vimeo.value} onChange={this.handleInputValue} /><br/>
@@ -122,6 +120,6 @@ const HOC = withSelect((select, {forceIsSaving})=>{
 })(NofmMetadata);
 
 registerPlugin('nofm-metadata', {
-	icon: 'editor-spellcheck',
+	icon: 'schedule',
 	render: HOC
 });
