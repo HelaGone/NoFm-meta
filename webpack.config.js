@@ -30,10 +30,11 @@ module.exports = {
       },
       {
         test: /style\.s?css$/,
-        use: [
-          devMode ? 'style-loader' : blockCSSPlugin.loader,
+        use: [{
+          loader: blockCSSPlugin.loader,
+        },
           "css-loader",
-          "postcss.loader",
+          "postcss-loader",
           "sass-loader"
         ]
       },
