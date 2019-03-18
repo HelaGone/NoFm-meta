@@ -20,7 +20,11 @@ function nofm_api_posts_meta_field(){
 		array(
 			'methods'=>'POST',
 			'callback'=>'nofm_update_meta_callback',
-			'args'=>array('id'=>array('sanitize_callback'=>'absint'))
+			'args'=>array(
+				'id'=>array(
+					'sanitize_callback'=>'absint'
+				)
+			)
 		)
 	);
 }
