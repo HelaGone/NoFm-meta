@@ -16,19 +16,34 @@ class NofmMetadata extends Component{
 		this.handleInputValue = this.handleInputValue.bind(this);
 
 		this.state={
-			key: '_id_youtube',
-			value: ''
+			_id_youtube: {
+				key: '',
+				value: ''
+			},
+			_id_vimeo: {
+				key: '',
+				value: ''
+			}
 		}
 
 		wp.apiFetch({
 			path: `/wp/v2/posts/${this.props.postId}`, 
 			method: 'GET'
 		}).then(data=>{
+
 			// console.log(data.meta);
+
 			this.setState({
-				key:'_id_youtube',
-				value: data.meta._id_youtube
+				_id_youtube: {
+					key:'_id_youtube',
+					value: data.meta._id_youtube
+				},
+				_id_vimeo: {
+					key:'_id_vimeo',
+					value: data.meta._id_vimeo
+				}
 			});
+
 			return data;
 		}).catch(error=>console.error(error));
 
@@ -36,19 +51,23 @@ class NofmMetadata extends Component{
 
 
 	static getDerivedStateFromProps(nextProps, state){
-
-		if((nextProps.isPublishing||nextProps.isSaving) && !nextProps.isAutoSaving){
-			wp.apiRequest({
-				path: `/nofm/v2/update-meta?id=${nextProps.postId}`,
-				method: 'POST',
-				data: state
-			}).then(
-				(data)=>{
-					return data;
-			},(err)=>{
-				return err;
-			});
-		}
+		const state_arr = Object.values(state);
+		// console.log(state_arr);
+		state_arr.map(object=>{
+			// console.log(object);
+			if((nextProps.isPublishing||nextProps.isSaving) && !nextProps.isAutoSaving){
+				wp.apiRequest({
+					path: `/nofm/v2/update-meta?id=${nextProps.postId}`,
+					method: 'POST',
+					data: object
+				}).then(
+					(data)=>{
+						return data;
+				},(err)=>{
+					return err;
+				});
+			}
+		});
 
 	}//end get derived state from props
 
@@ -62,26 +81,34 @@ class NofmMetadata extends Component{
 				</PluginSidebarMoreMenuItem>
 				<PluginSidebar name="nofm-metadata-sidebar" title={ __( 'Nofm Metadata' ) }>
 					<PanelBody>
-						<TextControl
-							label={ __( 'ID de youtube' ) }
-							value={this.state.value}
-							onChange={this.handleInputValue}
-						/>
+
+						<label for="_id_youtbe">Id de Youtube</label><br/>
+						<input type="text" name="_id_youtbe" value={this.state._id_youtube.value} onChange={this.handleInputValue} /><br/>
+
+						<label for="_id_vimeo">Id de Vimeo</label><br/>
+						<input type="text" name="_id_vimeo" value={this.state._id_vimeo.value} onChange={this.handleInputValue} /><br/>
+
 					</PanelBody>
 				</PluginSidebar>
 			</Fragment>
 		)
 	}//end render
 
-	handleInputValue(value){
-		console.log(value);
-		this.setState({
-			key: '_id_youtube',
-			value: value
-		})
-	}
+	handleInputValue(event){
+		const target = event.target;
+		const value = target.value;
+		const name = target.name;
 
-}
+		this.setState({
+			[name]:{
+				key: name,
+				value: value
+			}
+		});
+
+	}//end handle input value
+
+}//End class
 
 const HOC = withSelect((select, {forceIsSaving})=>{
 	const { getCurrentPostId, isSavingPost, isPublishingPost, isAutosavingPost, getEditedPostAttribute, isTyping, getPermalink} = select('core/editor');

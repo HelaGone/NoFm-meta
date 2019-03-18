@@ -4,6 +4,7 @@
 */
 function nofm_register_meta(){
 	register_meta('post','_id_youtube',array('type'=>'string','single'=>true,'show_in_rest'=>true));
+	register_meta('post','_id_vimeo',array('type'=>'string','single'=>true,'show_in_rest'=>true));
 }
 add_action('init', 'nofm_register_meta');
 
