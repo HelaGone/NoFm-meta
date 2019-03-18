@@ -1,0 +1,26 @@
+{
+  "name": "nofm-meta",
+  "version": "1.0.0",
+  "description": "Metaboxes for nofm theme",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HelaGone/NoFm-meta.git"
+  },
+  "keywords": [
+    "Plugin",
+    "Metaboxes",
+    "data",
+    "Gutenberg",
+    "Radio"
+  ],
+  "author": "Holkan Luna",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HelaGone/NoFm-meta/issues"
+  },
+  "homepage": "https://github.com/HelaGone/NoFm-meta#readme"
+}
