@@ -21,6 +21,10 @@ class NofmMetadata extends Component{
 			_id_vimeo:{
 				key: '',
 				value: ''
+			},
+			_is_featured:{
+				key:'_is_featured',
+				value: true
 			}
 		}
 
@@ -29,7 +33,7 @@ class NofmMetadata extends Component{
 			method: 'GET'
 		}).then(data=>{
 
-			// console.log(data.meta);
+			// console.log(data.meta._is_featured.length);
 
 			this.setState({
 				_id_youtube: {
@@ -39,6 +43,10 @@ class NofmMetadata extends Component{
 				_id_vimeo: {
 					key:'_id_vimeo',
 					value: data.meta._id_vimeo
+				},
+				_is_featured:{
+					key:'_is_featured',
+					value: (data.meta._is_featured.length === 0) ? false : data.meta._is_featured
 				}
 			});
 
@@ -86,6 +94,9 @@ class NofmMetadata extends Component{
 						<label for="_id_vimeo">Id de Vimeo</label><br/>
 						<input type="text" name="_id_vimeo" value={this.state._id_vimeo.value} onChange={this.handleInputValue} /><br/>
 
+						<label for="_is_featured">Featured post</label><br/>
+						<input type="checkbox" name="_is_featured" value={this.state._is_featured.value} onChange={this.handleInputValue} checked={this.state._is_featured.value}/><br/>
+
 					</PanelBody>
 				</PluginSidebar>
 			</Fragment>
@@ -94,13 +105,17 @@ class NofmMetadata extends Component{
 
 	handleInputValue(event){
 		const target = event.target;
-		const value = target.value;
+		const value = target.type==='checkbox' ? target.checked : target.value;
 		const name = target.name;
+
+
+		let final_value = (name!='_is_featured') ? value : !this.state._is_featured.value;
+		// console.log(final_value);
 
 		this.setState({
 			[name]:{
 				key: name,
-				value: value
+				value: final_value
 			}
 		});
 
