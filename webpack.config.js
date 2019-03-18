@@ -5,8 +5,8 @@ const devMode = process.env.NODE_ENV !== 'priduction';
 
 // Set different CSS extraction for editor only and common block styles
 const blockCSSPlugin = new MiniCssExtractPlugin( {
-  filename: devMode ? './dist/[name]_block.css' : './dist/[name].[hash]_block.css',
-  chunkFilename: devMode ? "./dist/[id].css" : "./dist/[id].[hash].css"
+  filename: devMode ? './[name]_block.css' : './[name].[hash]_block.css',
+  chunkFilename: devMode ? "./[id].css" : "./[id].[hash].css"
 });
 
 module.exports = {
@@ -29,12 +29,12 @@ module.exports = {
         },
       },
       {
-        test: /style\.s?css$/,
-        use: [
-          devMode ? 'style-loader' : MiniCssExtractPlugin.loader,
+        test: /\.css$/,
+        use: [{
+          loader: MiniCssExtractPlugin.loader
+        },
           "css-loader",
-          "postcss-loader",
-          "sass-loader"
+          "postcss-loader"
         ]
       },
     ]

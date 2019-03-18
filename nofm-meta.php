@@ -26,7 +26,7 @@ include_once NOFM_META_PATH.'/includes/nofm-metaboxes.php';
 */
 function nofm_meta_enqueue_scripts(){
 	$blockpath = 'dist/block.js';
-	$stylepath = '/dist/block.css';
+	$stylepath = 'dist/block_block.css';
 
 	//JS
 	wp_register_script(
