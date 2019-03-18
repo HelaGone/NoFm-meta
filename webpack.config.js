@@ -31,7 +31,7 @@ module.exports = {
       {
         test: /style\.s?css$/,
         use: [{
-          loader: blockCSSPlugin.loader,
+          loader: MiniCssExtractPlugin.loader,
         },
           "css-loader",
           "postcss-loader",
