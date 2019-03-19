@@ -5,7 +5,7 @@ const {__} = wp.i18n;
 const {PluginSidebar,PluginSidebarMoreMenuItem} = wp.editPost;
 const {PanelBody,TextControl, TextareaControl} = wp.components;
 const {Component,Fragment} = wp.element;
-const {withSelect} = wp.data;
+const {withSelect, select} = wp.data;
 const {registerPlugin} = wp.plugins;
 const {addAction} = wp.hooks;
 
@@ -21,28 +21,47 @@ class NofmMetadata extends Component{
 			_id_vimeo:{
 				key: '',
 				value: ''
+			},
+			should_render: false
+		}
+
+		const {postType} = this.props
+
+		if(postType==='post'){
+			wp.apiFetch({
+				path: `/wp/v2/posts/${this.props.postId}`,
+				method: 'GET'
+			}).then(data=>{
+
+				this.setState({
+					_id_youtube: {
+						key:'_id_youtube',
+						value: data.meta._id_youtube
+					},
+					_id_vimeo: {
+						key:'_id_vimeo',
+						value: data.meta._id_vimeo
+					}
+				});
+				return data;
+			}).catch(error=>console.error(error));
+		}
+
+	}//end constructor
+
+	componentDidMount(){
+		const {getCurrentPostType} = select('core/editor');
+
+		if(getCurrentPostType() === 'post'){
+			console.log(getCurrentPostType());
+			if(!this.state.should_render){
+				this.setState({
+					should_render: true
+				});
 			}
 		}
 
-		wp.apiFetch({
-			path: `/wp/v2/posts/${this.props.postId}`,
-			method: 'GET'
-		}).then(data=>{
-
-			this.setState({
-				_id_youtube: {
-					key:'_id_youtube',
-					value: data.meta._id_youtube
-				},
-				_id_vimeo: {
-					key:'_id_vimeo',
-					value: data.meta._id_vimeo
-				}
-			});
-			return data;
-		}).catch(error=>console.error(error));
-
-	}//end constructor
+	}
 
 
 	static getDerivedStateFromProps(nextProps, state){
@@ -70,20 +89,24 @@ class NofmMetadata extends Component{
 	}//end get derived state from props
 
 	render(){
+		const {should_render} = this.state;
 		return(
 			<Fragment>
 				<PluginSidebarMoreMenuItem target="nofm-metadata-sidebar">
 					{ __( 'NoFm Metadata' ) }
 				</PluginSidebarMoreMenuItem>
-				<PluginSidebar name="nofm-metadata-sidebar" title={ __( 'Nofm Metadata' ) }>
-					<PanelBody>
-							<label for="_id_youtbe">Id de Youtube</label><br/>
-							<input type="text" name="_id_youtube" value={this.state._id_youtube.value} onChange={this.handleInputValue} /><br/>
-
-							<label for="_id_vimeo">Id de Vimeo</label><br/>
-							<input type="text" name="_id_vimeo" value={this.state._id_vimeo.value} onChange={this.handleInputValue} /><br/>
-					</PanelBody>
-				</PluginSidebar>
+				{
+					should_render && (
+						<PluginSidebar name="nofm-metadata-sidebar" title={ __( 'Nofm Metadata' ) }>
+							<PanelBody>
+								<label for="_id_youtbe">Id de Youtube</label><br/>
+								<input type="text" name="_id_youtube" value={this.state._id_youtube.value} onChange={this.handleInputValue} /><br/>
+								<label for="_id_vimeo">Id de Vimeo</label><br/>
+								<input type="text" name="_id_vimeo" value={this.state._id_vimeo.value} onChange={this.handleInputValue} /><br/>
+							</PanelBody>
+						</PluginSidebar>
+					)
+				}
 			</Fragment>
 		)
 	}//end render
