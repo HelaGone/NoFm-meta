@@ -26,6 +26,22 @@ class NofmMetadata extends Component{
 				key: '',
 				value: ''
 			},
+			_podcast_url: {
+				key: '',
+				value: ''
+			},
+			_prog_horario_dias:{
+				key: '',
+				value: ''
+			},
+			_prog_hora:{
+				key: '',
+				value: ''
+			},
+			_prog_duration:{
+				key: '',
+				value: ''
+			},
 			should_render: false,
 			is_pt_post: false,
 			is_cpt_programs: false,
@@ -39,6 +55,8 @@ class NofmMetadata extends Component{
 			path = `/wp/v2/posts/${this.props.postId}`; 
 		}else if(postType==='podcasts'){
 			path = `/wp/v2/podcasts/${this.props.postId}`;
+		}else if(postType==='programas'){
+			path = `/wp/v2/programas/${this.props.postId}`;
 		}
 
 		wp.apiFetch({
@@ -61,8 +79,27 @@ class NofmMetadata extends Component{
 					_podcast_duration: {
 						key: '_podcast_duration',
 						value: data.meta._podcast_duration
+					},
+					_podcast_url: {
+						key: '_podcast_url',
+						value: data.meta._podcast_url
 					}
 				});
+			}else if(postType==='programas'){
+				this.setState({
+					_prog_horario_dias:{
+						key: '_prog_horario_dias',
+						value: data.meta._prog_horario_dias
+					},
+					_prog_hora:{
+						key: '_prog_hora',
+						value: data.meta._prog_hora
+					},
+					_prog_duration:{
+						key: '_prog_duration',
+						value: data.meta._prog_duration
+					}
+				})
 			}
 			return data;
 		}).catch(error=>console.error(error));
@@ -139,7 +176,6 @@ class NofmMetadata extends Component{
 
 	render(){
 		const {is_pt_post, is_cpt_archive, is_cpt_programs, is_cpt_podcasts} = this.state;
-		console.log(this.state);
 		let metabox_render;
 
 		if(is_pt_post){
@@ -157,20 +193,23 @@ class NofmMetadata extends Component{
 					<label for="_podcast_duration">Duración del podcast</label><br/>
 					<input type="text" name="_podcast_duration" value={this.state._podcast_duration.value} onChange={this.handleInputValue} /><br/>
 
-					{/*<label for="_podcast_duration">Programa al que pertenece</label><br/>
-					<input type="text" name="_podcast_duration" value={this.state._podcast_duration.value} onChange={this.handleInputValue} /><br/>*/}
+					<label for="_podcast_url">Url del podcast</label><br/>
+					<input type="text" name="_podcast_url" value={this.state._podcast_url.value} onChange={this.handleInputValue} /><br/>
 				</PanelBody>
 			);
 		}else if(is_cpt_programs){
-			/*metabox_render = (
+			metabox_render = (
 				<PanelBody>
-					<label for="_program_schedule">Program Duration</label><br/>
-					<input type="text" name="_program_schedule" 
-						//value={this.state._program_schedule.value} 
-						//onChange={this.handleInputValue} 
-					/><br/>
+					<label for="_prog_horario_dias">Horario del programa</label><br/>
+					<input type="text" name="_prog_horario_dias" value={this.state._prog_horario_dias.value} onChange={this.handleInputValue} placeholder="Lunes y Viernes" /><br/>
+
+					<label for="_prog_hora">Hora del programa</label><br/>
+					<input type="text" name="_prog_hora" value={this.state._prog_hora.value} onChange={this.handleInputValue} placeholder="0 - 23h" /><br/>
+
+					<label for="_prog_duration">Duración del programa</label><br/>
+					<input type="text" name="_prog_duration" value={this.state._prog_duration.value} onChange={this.handleInputValue} placeholder="30, 60 ó 90min" /><br/>
 				</PanelBody>	
-			);*/
+			);
 		}
 
 		return(
