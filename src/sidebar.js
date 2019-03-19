@@ -34,12 +34,18 @@ class NofmMetadata extends Component{
 		}
 
 		const {postType} = this.props
-
+		let path;
 		if(postType==='post'){
-			wp.apiFetch({
-				path: `/wp/v2/posts/${this.props.postId}`,
-				method: 'GET'
-			}).then(data=>{
+			path = `/wp/v2/posts/${this.props.postId}`; 
+		}else if(postType==='podcasts'){
+			path = `/wp/v2/podcasts/${this.props.postId}`;
+		}
+
+		wp.apiFetch({
+			path: path,
+			method: 'GET'
+		}).then(data=>{
+			if(postType==='post'){
 				this.setState({
 					_id_youtube: {
 						key:'_id_youtube',
@@ -48,15 +54,18 @@ class NofmMetadata extends Component{
 					_id_vimeo: {
 						key:'_id_vimeo',
 						value: data.meta._id_vimeo
-					},
+					}
+				});
+			}else if(postType==='podcasts'){
+				this.setState({
 					_podcast_duration: {
 						key: '_podcast_duration',
 						value: data.meta._podcast_duration
 					}
 				});
-				return data;
-			}).catch(error=>console.error(error));
-		}
+			}
+			return data;
+		}).catch(error=>console.error(error));
 
 	}//end constructor
 
