@@ -22,7 +22,15 @@ class NofmMetadata extends Component{
 				key: '',
 				value: ''
 			},
-			should_render: false
+			_podcast_duration: {
+				key: '',
+				value: ''
+			},
+			should_render: false,
+			is_pt_post: false,
+			is_cpt_programs: false,
+			is_cpt_archive: false,
+			is_cpt_podcasts: false
 		}
 
 		const {postType} = this.props
@@ -32,7 +40,6 @@ class NofmMetadata extends Component{
 				path: `/wp/v2/posts/${this.props.postId}`,
 				method: 'GET'
 			}).then(data=>{
-
 				this.setState({
 					_id_youtube: {
 						key:'_id_youtube',
@@ -41,6 +48,10 @@ class NofmMetadata extends Component{
 					_id_vimeo: {
 						key:'_id_vimeo',
 						value: data.meta._id_vimeo
+					},
+					_podcast_duration: {
+						key: '_podcast_duration',
+						value: data.meta._podcast_duration
 					}
 				});
 				return data;
@@ -53,15 +64,44 @@ class NofmMetadata extends Component{
 		const {getCurrentPostType} = select('core/editor');
 
 		if(getCurrentPostType() === 'post'){
-			console.log(getCurrentPostType());
-			if(!this.state.should_render){
+			if(!this.state.is_pt_post){
 				this.setState({
-					should_render: true
+					is_pt_post: true,
+					is_cpt_podcasts: false,
+					is_cpt_programs: false,
+					is_cpt_archive: false
+				});
+			}
+		}else if(getCurrentPostType() === 'podcasts'){
+			if(!this.state.is_cpt_podcasts){
+				this.setState({
+					is_pt_post: false,
+					is_cpt_podcasts: true,
+					is_cpt_programs: false,
+					is_cpt_archive: false
+				});
+			}
+		}else if(getCurrentPostType() === 'programas'){
+			if(!this.state.is_cpt_programs){
+				this.setState({
+					is_pt_post: false,
+					is_cpt_podcasts: false,
+					is_cpt_programs: true,
+					is_cpt_archive: false
+				});
+			}
+		}else if(getCurrentPostType() === 'archivo'){
+			if(!this.state.is_cpt_archive){
+				this.setState({
+					is_pt_post: false,
+					is_cpt_podcasts: false,
+					is_cpt_programs: false,
+					is_cpt_archive: true
 				});
 			}
 		}
 
-	}
+	}// End did mount
 
 
 	static getDerivedStateFromProps(nextProps, state){
@@ -89,24 +129,49 @@ class NofmMetadata extends Component{
 	}//end get derived state from props
 
 	render(){
-		const {should_render} = this.state;
+		const {is_pt_post, is_cpt_archive, is_cpt_programs, is_cpt_podcasts} = this.state;
+		console.log(this.state);
+		let metabox_render;
+
+		if(is_pt_post){
+			metabox_render = (
+				<PanelBody>
+					<label for="_id_youtube">Id de Youtube</label><br/>
+					<input type="text" name="_id_youtube" value={this.state._id_youtube.value} onChange={this.handleInputValue} /><br/>
+					<label for="_id_vimeo">Id de Vimeo</label><br/>
+					<input type="text" name="_id_vimeo" value={this.state._id_vimeo.value} onChange={this.handleInputValue} /><br/>
+				</PanelBody>
+			);
+		}else if(is_cpt_podcasts){
+			metabox_render = (
+				<PanelBody>
+					<label for="_podcast_duration">Duración del podcast</label><br/>
+					<input type="text" name="_podcast_duration" value={this.state._podcast_duration.value} onChange={this.handleInputValue} /><br/>
+
+					{/*<label for="_podcast_duration">Programa al que pertenece</label><br/>
+					<input type="text" name="_podcast_duration" value={this.state._podcast_duration.value} onChange={this.handleInputValue} /><br/>*/}
+				</PanelBody>
+			);
+		}else if(is_cpt_programs){
+			/*metabox_render = (
+				<PanelBody>
+					<label for="_program_schedule">Program Duration</label><br/>
+					<input type="text" name="_program_schedule" 
+						//value={this.state._program_schedule.value} 
+						//onChange={this.handleInputValue} 
+					/><br/>
+				</PanelBody>	
+			);*/
+		}
+
 		return(
 			<Fragment>
 				<PluginSidebarMoreMenuItem target="nofm-metadata-sidebar">
 					{ __( 'NoFm Metadata' ) }
 				</PluginSidebarMoreMenuItem>
-				{
-					should_render && (
-						<PluginSidebar name="nofm-metadata-sidebar" title={ __( 'Nofm Metadata' ) }>
-							<PanelBody>
-								<label for="_id_youtbe">Id de Youtube</label><br/>
-								<input type="text" name="_id_youtube" value={this.state._id_youtube.value} onChange={this.handleInputValue} /><br/>
-								<label for="_id_vimeo">Id de Vimeo</label><br/>
-								<input type="text" name="_id_vimeo" value={this.state._id_vimeo.value} onChange={this.handleInputValue} /><br/>
-							</PanelBody>
-						</PluginSidebar>
-					)
-				}
+				<PluginSidebar name="nofm-metadata-sidebar" title={ __( 'Nofm Metadata' ) }>
+					{metabox_render}
+				</PluginSidebar>
 			</Fragment>
 		)
 	}//end render
