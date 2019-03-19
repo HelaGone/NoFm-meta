@@ -25,15 +25,14 @@ class NofmMetadata extends Component{
 			_is_featured:{
 				key:'_is_featured',
 				value: true
-			}
+			},
+			should_render: false
 		}
 
 		wp.apiFetch({
-			path: `/wp/v2/posts/${this.props.postId}`, 
+			path: `/wp/v2/posts/${this.props.postId}`,
 			method: 'GET'
 		}).then(data=>{
-
-			// console.log(data.meta._is_featured.length);
 
 			this.setState({
 				_id_youtube: {
@@ -49,7 +48,6 @@ class NofmMetadata extends Component{
 					value: (data.meta._is_featured.length === 0) ? false : data.meta._is_featured
 				}
 			});
-
 			return data;
 		}).catch(error=>console.error(error));
 
@@ -58,28 +56,47 @@ class NofmMetadata extends Component{
 
 	static getDerivedStateFromProps(nextProps, state){
 		const state_arr = Object.values(state);
-		// console.log(state_arr);
+
 		state_arr.map(object=>{
-			// console.log(object);
-			if((nextProps.isPublishing||nextProps.isSaving) && !nextProps.isAutoSaving){
-				wp.apiRequest({
-					path: `/nofm/v2/update-meta?id=${nextProps.postId}`,
-					method: 'POST',
-					data: object
-				}).then(
-					(data)=>{
-						return data;
-				},(err)=>{
-					return err;
-				});
+			if(object.key!==undefined){
+				// console.log(object);
+				if((nextProps.isPublishing||nextProps.isSaving) && !nextProps.isAutoSaving){
+					wp.apiRequest({
+						path: `/nofm/v2/update-meta?id=${nextProps.postId}`,
+						method: 'POST',
+						data: object
+					}).then(
+						(data)=>{
+							return data;
+					},(err)=>{
+						return err;
+					});
+				}
 			}
-		});
+
+		}); //End map
 
 	}//end get derived state from props
 
+	// componentDidUpdate(prevProps, prevState){
+	// 	console.log('did update');
+
+	// 	const {should_render} = prevState;
+
+	// 	if(prevProps.postType==='post'){
+	// 		if(!should_render){
+	// 			this.setState({
+	// 				should_render: true
+	// 			});	
+	// 		}
+	// 	}
+
+	// }
+
 
 	render(){
-		// console.log(this.state);
+		// const {should_render} = this.state;
+		// console.log(should_render);
 		return(
 			<Fragment>
 				<PluginSidebarMoreMenuItem target="nofm-metadata-sidebar">
@@ -87,16 +104,14 @@ class NofmMetadata extends Component{
 				</PluginSidebarMoreMenuItem>
 				<PluginSidebar name="nofm-metadata-sidebar" title={ __( 'Nofm Metadata' ) }>
 					<PanelBody>
+							<label for="_id_youtbe">Id de Youtube</label><br/>
+							<input type="text" name="_id_youtube" value={this.state._id_youtube.value} onChange={this.handleInputValue} /><br/>
 
-						<label for="_id_youtbe">Id de Youtube</label><br/>
-						<input type="text" name="_id_youtube" value={this.state._id_youtube.value} onChange={this.handleInputValue} /><br/>
+							<label for="_id_vimeo">Id de Vimeo</label><br/>
+							<input type="text" name="_id_vimeo" value={this.state._id_vimeo.value} onChange={this.handleInputValue} /><br/>
 
-						<label for="_id_vimeo">Id de Vimeo</label><br/>
-						<input type="text" name="_id_vimeo" value={this.state._id_vimeo.value} onChange={this.handleInputValue} /><br/>
-
-						<label for="_is_featured">Featured post</label><br/>
-						<input type="checkbox" name="_is_featured" value={this.state._is_featured.value} onChange={this.handleInputValue} checked={this.state._is_featured.value}/><br/>
-
+							<label for="_is_featured">Featured post</label><br/>
+							<input type="checkbox" name="_is_featured" value={this.state._is_featured.value} onChange={this.handleInputValue} checked={this.state._is_featured.value}/><br/>
 					</PanelBody>
 				</PluginSidebar>
 			</Fragment>
@@ -124,15 +139,18 @@ class NofmMetadata extends Component{
 }//End class
 
 const HOC = withSelect((select, {forceIsSaving})=>{
-	const { getCurrentPostId, isSavingPost, isPublishingPost, isAutosavingPost, getEditedPostAttribute, isTyping, getPermalink} = select('core/editor');
+	const { getCurrentPostId, getCurrentPostType, isSavingPost, isPublishingPost, isAutosavingPost, getEditedPostAttribute, isTyping, getPermalink} = select('core/editor');
+
 	return{
 		postId: getCurrentPostId(),
 		isSaving: forceIsSaving || isSavingPost(),
 		isAutoSaving: isAutosavingPost(),
 		isPublishing: isPublishingPost(),
 		isTyping: isTyping(),
+		postType: getCurrentPostType()
 	}
-})(NofmMetadata);
+
+})( NofmMetadata );
 
 registerPlugin('nofm-metadata', {
 	icon: 'schedule',
