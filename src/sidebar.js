@@ -48,10 +48,8 @@ class NofmMetadata extends Component{
 				value: null
 			},
 			programas: [],
-			should_render: false,
 			is_pt_post: false,
 			is_cpt_programs: false,
-			is_cpt_archive: false,
 			is_cpt_podcasts: false
 		}
 
@@ -65,54 +63,48 @@ class NofmMetadata extends Component{
 			path = `/wp/v2/programas/${this.props.postId}`;
 		}
 
-		wp.apiFetch({
-			path: path,
-			method: 'GET'
-		}).then(data=>{
-			if(postType==='post'){
-				this.setState({
-					_id_youtube: {
-						key:'_id_youtube',
-						value: data.meta._id_youtube
-					},
-					_id_vimeo: {
-						key:'_id_vimeo',
-						value: data.meta._id_vimeo
-					}
-				});
-			}else if(postType==='podcasts'){
-				this.setState({
-					_podcast_duration: {
-						key: '_podcast_duration',
-						value: data.meta._podcast_duration
-					},
-					_podcast_url: {
-						key: '_podcast_url',
-						value: data.meta._podcast_url
-					},
-					_podcast_show:{
-						key: '_podcast_show',
-						value: data.meta._podcast_show
-					}
-				});
-			}else if(postType==='programas'){
-				this.setState({
-					_prog_horario_dias:{
-						key: '_prog_horario_dias',
-						value: data.meta._prog_horario_dias
-					},
-					_prog_hora:{
-						key: '_prog_hora',
-						value: data.meta._prog_hora
-					},
-					_prog_duration:{
-						key: '_prog_duration',
-						value: data.meta._prog_duration
-					}
-				})
-			}
-			return data;
-		}).catch(error=>console.error(error));
+		if(postType!=='archivo'){
+			wp.apiFetch({
+				path: path,
+				method: 'GET'
+			}).then(data=>{
+					this.setState({
+						_id_youtube: {
+							key:'_id_youtube',
+							value: data.meta._id_youtube
+						},
+						_id_vimeo: {
+							key:'_id_vimeo',
+							value: data.meta._id_vimeo
+						},
+						_podcast_duration: {
+							key: '_podcast_duration',
+							value: data.meta._podcast_duration
+						},
+						_podcast_url: {
+							key: '_podcast_url',
+							value: data.meta._podcast_url
+						},
+						_podcast_show:{
+							key: '_podcast_show',
+							value: data.meta._podcast_show
+						},
+						_prog_horario_dias:{
+							key: '_prog_horario_dias',
+							value: data.meta._prog_horario_dias
+						},
+						_prog_hora:{
+							key: '_prog_hora',
+							value: data.meta._prog_hora
+						},
+						_prog_duration:{
+							key: '_prog_duration',
+							value: data.meta._prog_duration
+						}
+					});
+				return data;
+			}).catch(error=>console.error(error));
+		}	
 
 	}//end constructor
 
@@ -125,7 +117,6 @@ class NofmMetadata extends Component{
 					is_pt_post: true,
 					is_cpt_podcasts: false,
 					is_cpt_programs: false,
-					is_cpt_archive: false
 				});
 			}
 		}else if(getCurrentPostType() === 'podcasts'){
@@ -134,7 +125,6 @@ class NofmMetadata extends Component{
 					is_pt_post: false,
 					is_cpt_podcasts: true,
 					is_cpt_programs: false,
-					is_cpt_archive: false
 				});
 			}
 		}else if(getCurrentPostType() === 'programas'){
@@ -143,20 +133,9 @@ class NofmMetadata extends Component{
 					is_pt_post: false,
 					is_cpt_podcasts: false,
 					is_cpt_programs: true,
-					is_cpt_archive: false
-				});
-			}
-		}else if(getCurrentPostType() === 'archivo'){
-			if(!this.state.is_cpt_archive){
-				this.setState({
-					is_pt_post: false,
-					is_cpt_podcasts: false,
-					is_cpt_programs: false,
-					is_cpt_archive: true
 				});
 			}
 		}
-
 
 		//Getting posts from programas CPT
 		wp.apiFetch({
@@ -176,37 +155,38 @@ class NofmMetadata extends Component{
 
 	static getDerivedStateFromProps(nextProps, state){
 		const state_arr = Object.values(state);
-		const filtered = state_arr.filter(object=>{
-			if( (typeof(object.key)!=='object') ||  object.key!=''){
-				// console.log(object.key);
-				return object.key;
-			}
-			return null;
-		});
-		// console.log(filtered);
-		filtered.map(keypar=>{
-			// console.log(keypar);
-				if((nextProps.isPublishing||nextProps.isSaving) && !nextProps.isAutoSaving){
-					wp.apiRequest({
-						path: `/nofm/v2/update-meta?id=${nextProps.postId}`,
-						method: 'POST',
-						data: keypar
-					}).then(
-						(data)=>{
-							return data;
-					},(err)=>{
-						return err;
-					});
+		const {postType} = nextProps;
+
+		if(postType!=='archivo'){
+
+			const filtered = state_arr.filter(object=>{
+				if( (typeof(object.key)!=='object') ||  object.key!=''){
+					return object.key;
 				}
+				return null;
+			});
 
-		}); //End map
-
+			filtered.map(keypar=>{
+					if((nextProps.isPublishing||nextProps.isSaving) && !nextProps.isAutoSaving){
+						wp.apiRequest({
+							path: `/nofm/v2/update-meta?id=${nextProps.postId}`,
+							method: 'POST',
+							data: keypar
+						}).then(
+							(data)=>{
+								return data;
+						},(err)=>{
+							return err;
+						});
+					}
+			}); //End map
+		}//End if archivo
 	}//end get derived state from props
 
 	render(){
-		const {is_pt_post, is_cpt_archive, is_cpt_programs, is_cpt_podcasts, programas} = this.state;
+		const {is_pt_post, is_cpt_programs, is_cpt_podcasts, programas} = this.state;
 		let metabox_render;
-
+		// console.log(this.state);
 		if(is_pt_post){
 			metabox_render = (
 				<PanelBody>
