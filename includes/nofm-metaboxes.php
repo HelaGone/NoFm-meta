@@ -9,8 +9,9 @@ function nofm_register_meta(){
 	//podcasts' metaboxes
 	register_meta('post','_podcast_duration',array('type'=>'string','single'=>true,'show_in_rest'=>true));
 	register_meta('post','_podcast_url',array('type'=>'string','single'=>true,'show_in_rest'=>true));
+	register_meta('post','_podcast_show',array('type'=>'string','single'=>true,'show_in_rest'=>true));
 	//Falta el metabox que guarda el programa al que pertenece
-	
+
 	//programas' metaboxes
 	register_meta('post','_prog_horario_dias',array('type'=>'string','single'=>true,'show_in_rest'=>true));	
 	register_meta('post','_prog_hora',array('type'=>'string','single'=>true,'show_in_rest'=>true));	

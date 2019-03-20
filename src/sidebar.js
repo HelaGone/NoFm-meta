@@ -13,6 +13,7 @@ class NofmMetadata extends Component{
 	constructor(props){
 		super(props);
 		this.handleInputValue = this.handleInputValue.bind(this);
+		this.handleSelectValue = this.handleSelectValue.bind(this);
 		this.state={
 			_id_youtube:{
 				key: '',
@@ -30,6 +31,10 @@ class NofmMetadata extends Component{
 				key: '',
 				value: ''
 			},
+			_podcast_show:{
+				key: '',
+				value: ''
+			},
 			_prog_horario_dias:{
 				key: '',
 				value: ''
@@ -42,6 +47,7 @@ class NofmMetadata extends Component{
 				key: '',
 				value: ''
 			},
+			programas: [],
 			should_render: false,
 			is_pt_post: false,
 			is_cpt_programs: false,
@@ -83,6 +89,10 @@ class NofmMetadata extends Component{
 					_podcast_url: {
 						key: '_podcast_url',
 						value: data.meta._podcast_url
+					},
+					_podcast_show:{
+						key: '_podcast_show',
+						value: data.meta._podcast_show
 					}
 				});
 			}else if(postType==='programas'){
@@ -147,6 +157,20 @@ class NofmMetadata extends Component{
 			}
 		}
 
+
+		//Getting posts from programas CPT
+		wp.apiFetch({
+			path: 'wp/v2/programas/',
+			method: 'GET'
+		})
+		.then(response=>{
+			this.setState({
+				programas: response
+			});
+			return response
+		})
+		.catch(error=>console.error(error));
+
 	}// End did mount
 
 
@@ -175,7 +199,7 @@ class NofmMetadata extends Component{
 	}//end get derived state from props
 
 	render(){
-		const {is_pt_post, is_cpt_archive, is_cpt_programs, is_cpt_podcasts} = this.state;
+		const {is_pt_post, is_cpt_archive, is_cpt_programs, is_cpt_podcasts, programas} = this.state;
 		let metabox_render;
 
 		if(is_pt_post){
@@ -195,6 +219,18 @@ class NofmMetadata extends Component{
 
 					<label for="_podcast_url">Url del podcast</label><br/>
 					<input type="text" name="_podcast_url" value={this.state._podcast_url.value} onChange={this.handleInputValue} /><br/>
+
+					<label>Programa al que pertenece</label><br/>
+					<select name="_podcast_show" onChange={this.handleSelectValue} value={this.state._podcast_show.value}>
+						<option value="">Sin programa</option>
+						{
+							programas.map(programa=>{
+								return(	
+									<option key={programa.id} value={programa.id}>{programa.title.rendered}</option>
+								)
+							})
+						}
+					</select>
 				</PanelBody>
 			);
 		}else if(is_cpt_programs){
@@ -237,6 +273,21 @@ class NofmMetadata extends Component{
 		});
 
 	}//end handle input value
+
+	handleSelectValue(event){
+		const target = event.target;
+		const value = target.value;
+		const name = target.name;
+		console.log(`${value} -> ${name}`);
+
+		this.setState({
+			[name]: {
+				key: name,
+				value: value
+			}
+		});
+
+	}
 
 }//End class
 
