@@ -16,36 +16,36 @@ class NofmMetadata extends Component{
 		this.handleSelectValue = this.handleSelectValue.bind(this);
 		this.state={
 			_id_youtube:{
-				key: '',
-				value: ''
+				key: null,
+				value: null
 			},
 			_id_vimeo:{
-				key: '',
-				value: ''
+				key: null,
+				value: null
 			},
 			_podcast_duration: {
-				key: '',
-				value: ''
+				key: null,
+				value: null
 			},
 			_podcast_url: {
-				key: '',
-				value: ''
+				key: null,
+				value: null
 			},
 			_podcast_show:{
-				key: '',
-				value: ''
+				key: null,
+				value: null
 			},
 			_prog_horario_dias:{
-				key: '',
-				value: ''
+				key: null,
+				value: null
 			},
 			_prog_hora:{
-				key: '',
-				value: ''
+				key: null,
+				value: null
 			},
 			_prog_duration:{
 				key: '',
-				value: ''
+				value: null
 			},
 			programas: [],
 			should_render: false,
@@ -176,15 +176,21 @@ class NofmMetadata extends Component{
 
 	static getDerivedStateFromProps(nextProps, state){
 		const state_arr = Object.values(state);
-
-		state_arr.map(object=>{
-			if(object.key!==undefined){
-				// console.log(object);
+		const filtered = state_arr.filter(object=>{
+			if( (typeof(object.key)!=='object') ||  object.key!=''){
+				// console.log(object.key);
+				return object.key;
+			}
+			return null;
+		});
+		// console.log(filtered);
+		filtered.map(keypar=>{
+			// console.log(keypar);
 				if((nextProps.isPublishing||nextProps.isSaving) && !nextProps.isAutoSaving){
 					wp.apiRequest({
 						path: `/nofm/v2/update-meta?id=${nextProps.postId}`,
 						method: 'POST',
-						data: object
+						data: keypar
 					}).then(
 						(data)=>{
 							return data;
@@ -192,7 +198,6 @@ class NofmMetadata extends Component{
 						return err;
 					});
 				}
-			}
 
 		}); //End map
 
@@ -278,7 +283,7 @@ class NofmMetadata extends Component{
 		const target = event.target;
 		const value = target.value;
 		const name = target.name;
-		console.log(`${value} -> ${name}`);
+		// console.log(`${value} -> ${name}`);
 
 		this.setState({
 			[name]: {
