@@ -23,15 +23,15 @@ class NofmMetadata extends Component{
 				key: null,
 				value: null
 			},
-			_podcast_duration: {
+			_episodio_duration: {
 				key: null,
 				value: null
 			},
-			_podcast_url: {
+			_episodio_url: {
 				key: null,
 				value: null
 			},
-			_podcast_show:{
+			_episodio_show:{
 				key: null,
 				value: null
 			},
@@ -50,15 +50,15 @@ class NofmMetadata extends Component{
 			programas: [],
 			is_pt_post: false,
 			is_cpt_programs: false,
-			is_cpt_podcasts: false
+			is_cpt_episodios: false
 		}
 
 		const {postType} = this.props
 		let path;
 		if(postType==='post'){
 			path = `/wp/v2/posts/${this.props.postId}`; 
-		}else if(postType==='podcasts'){
-			path = `/wp/v2/podcasts/${this.props.postId}`;
+		}else if(postType==='episodios'){
+			path = `/wp/v2/episodios/${this.props.postId}`;
 		}else if(postType==='programas'){
 			path = `/wp/v2/programas/${this.props.postId}`;
 		}
@@ -77,17 +77,17 @@ class NofmMetadata extends Component{
 							key:'_id_vimeo',
 							value: data.meta._id_vimeo
 						},
-						_podcast_duration: {
-							key: '_podcast_duration',
-							value: data.meta._podcast_duration
+						_episodio_duration: {
+							key: '_episodio_duration',
+							value: data.meta._episodio_duration
 						},
-						_podcast_url: {
-							key: '_podcast_url',
-							value: data.meta._podcast_url
+						_episodio_url: {
+							key: '_episodio_url',
+							value: data.meta._episodio_url
 						},
-						_podcast_show:{
-							key: '_podcast_show',
-							value: data.meta._podcast_show
+						_episodio_show:{
+							key: '_episodio_show',
+							value: data.meta._episodio_show
 						},
 						_prog_horario_dias:{
 							key: '_prog_horario_dias',
@@ -115,15 +115,15 @@ class NofmMetadata extends Component{
 			if(!this.state.is_pt_post){
 				this.setState({
 					is_pt_post: true,
-					is_cpt_podcasts: false,
+					is_cpt_episodios: false,
 					is_cpt_programs: false,
 				});
 			}
-		}else if(getCurrentPostType() === 'podcasts'){
-			if(!this.state.is_cpt_podcasts){
+		}else if(getCurrentPostType() === 'episodios'){
+			if(!this.state.is_cpt_episodios){
 				this.setState({
 					is_pt_post: false,
-					is_cpt_podcasts: true,
+					is_cpt_episodios: true,
 					is_cpt_programs: false,
 				});
 			}
@@ -131,7 +131,7 @@ class NofmMetadata extends Component{
 			if(!this.state.is_cpt_programs){
 				this.setState({
 					is_pt_post: false,
-					is_cpt_podcasts: false,
+					is_cpt_episodios: false,
 					is_cpt_programs: true,
 				});
 			}
@@ -184,7 +184,7 @@ class NofmMetadata extends Component{
 	}//end get derived state from props
 
 	render(){
-		const {is_pt_post, is_cpt_programs, is_cpt_podcasts, programas} = this.state;
+		const {is_pt_post, is_cpt_programs, is_cpt_episodios, programas} = this.state;
 		let metabox_render;
 		// console.log(this.state);
 		if(is_pt_post){
@@ -196,17 +196,17 @@ class NofmMetadata extends Component{
 					<input type="text" name="_id_vimeo" value={this.state._id_vimeo.value} onChange={this.handleInputValue} /><br/>
 				</PanelBody>
 			);
-		}else if(is_cpt_podcasts){
+		}else if(is_cpt_episodios){
 			metabox_render = (
 				<PanelBody>
-					<label for="_podcast_duration">Duración del podcast</label><br/>
-					<input type="text" name="_podcast_duration" value={this.state._podcast_duration.value} onChange={this.handleInputValue} /><br/>
+					<label for="_episodio_duration">Duración del episodio</label><br/>
+					<input type="text" name="_episodio_duration" value={this.state._episodio_duration.value} onChange={this.handleInputValue} /><br/>
 
-					<label for="_podcast_url">Url del podcast</label><br/>
-					<input type="text" name="_podcast_url" value={this.state._podcast_url.value} onChange={this.handleInputValue} /><br/>
+					<label for="_episodio_url">Url del episodio</label><br/>
+					<input type="text" name="_episodio_url" value={this.state._episodio_url.value} onChange={this.handleInputValue} /><br/>
 
 					<label>Programa al que pertenece</label><br/>
-					<select name="_podcast_show" onChange={this.handleSelectValue} value={this.state._podcast_show.value}>
+					<select name="_episodio_show" onChange={this.handleSelectValue} value={this.state._episodio_show.value}>
 						<option value="">Sin programa</option>
 						{
 							programas.map(programa=>{

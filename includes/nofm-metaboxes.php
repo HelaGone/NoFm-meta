@@ -6,10 +6,10 @@ function nofm_register_meta(){
 	register_meta('post','_id_youtube',array('type'=>'string','single'=>true,'show_in_rest'=>true));
 	register_meta('post','_id_vimeo',array('type'=>'string','single'=>true,'show_in_rest'=>true));
 
-	//podcasts' metaboxes
-	register_meta('post','_podcast_duration',array('type'=>'string','single'=>true,'show_in_rest'=>true));
-	register_meta('post','_podcast_url',array('type'=>'string','single'=>true,'show_in_rest'=>true));
-	register_meta('post','_podcast_show',array('type'=>'string','single'=>true,'show_in_rest'=>true));
+	//episodios' metaboxes
+	register_meta('post','_episodio_duration',array('type'=>'string','single'=>true,'show_in_rest'=>true));
+	register_meta('post','_episodio_url',array('type'=>'string','single'=>true,'show_in_rest'=>true));
+	register_meta('post','_episodio_show',array('type'=>'string','single'=>true,'show_in_rest'=>true));
 	//Falta el metabox que guarda el programa al que pertenece
 
 	//programas' metaboxes
