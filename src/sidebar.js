@@ -50,7 +50,8 @@ class NofmMetadata extends Component{
 			programas: [],
 			is_pt_post: false,
 			is_cpt_programs: false,
-			is_cpt_episodios: false
+			is_cpt_episodios: false,
+			is_cpt_glosario: false
 		}
 
 		const {postType} = this.props
@@ -61,6 +62,8 @@ class NofmMetadata extends Component{
 			path = `/wp/v2/episodios/${this.props.postId}`;
 		}else if(postType==='programas'){
 			path = `/wp/v2/programas/${this.props.postId}`;
+		}else if(postType==='glosario'){
+			path = `/wp/v2/glosario/${this.props.postId}`;
 		}
 
 		if(postType!=='archivo'){
@@ -117,6 +120,7 @@ class NofmMetadata extends Component{
 					is_pt_post: true,
 					is_cpt_episodios: false,
 					is_cpt_programs: false,
+					is_cpt_glosario: false
 				});
 			}
 		}else if(getCurrentPostType() === 'episodios'){
@@ -125,6 +129,7 @@ class NofmMetadata extends Component{
 					is_pt_post: false,
 					is_cpt_episodios: true,
 					is_cpt_programs: false,
+					is_cpt_glosario: false
 				});
 			}
 		}else if(getCurrentPostType() === 'programas'){
@@ -133,6 +138,16 @@ class NofmMetadata extends Component{
 					is_pt_post: false,
 					is_cpt_episodios: false,
 					is_cpt_programs: true,
+					is_cpt_glosario: false
+				});
+			}
+		}else if(getCurrentPostType() === 'glosario' ){
+			if(!this.state.is_cpt_glosario){
+				this.setState({
+					is_pt_post: false,
+					is_cpt_episodios: false,
+					is_cpt_programs: false,
+					is_cpt_glosario: true
 				});
 			}
 		}
@@ -180,11 +195,11 @@ class NofmMetadata extends Component{
 						});
 					}
 			}); //End map
-		}//End if archivo
+		}//End if not archivo
 	}//end get derived state from props
 
 	render(){
-		const {is_pt_post, is_cpt_programs, is_cpt_episodios, programas} = this.state;
+		const {is_pt_post, is_cpt_programs, is_cpt_episodios, is_cpt_glosario, programas} = this.state;
 		let metabox_render;
 		// console.log(this.state);
 		if(is_pt_post){
@@ -196,7 +211,7 @@ class NofmMetadata extends Component{
 					<input type="text" name="_id_vimeo" value={this.state._id_vimeo.value} onChange={this.handleInputValue} /><br/>
 				</PanelBody>
 			);
-		}else if(is_cpt_episodios){
+		}else if(is_cpt_episodios||is_cpt_glosario){
 			metabox_render = (
 				<PanelBody>
 					<label for="_episodio_duration">Duración del episodio</label><br/>
