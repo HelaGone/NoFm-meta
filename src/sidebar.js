@@ -23,15 +23,15 @@ class NofmMetadata extends Component{
 				key: null,
 				value: null
 			},
-			_episodio_duration: {
+			_podcasts_duration: {
 				key: null,
 				value: null
 			},
-			_episodio_url: {
+			_podcasts_url: {
 				key: null,
 				value: null
 			},
-			_episodio_show:{
+			_podcasts_show:{
 				key: null,
 				value: null
 			},
@@ -49,8 +49,8 @@ class NofmMetadata extends Component{
 			},
 			programas: [],
 			is_pt_post: false,
-			is_cpt_programs: false,
-			is_cpt_episodios: false,
+			is_cpt_programas: false,
+			is_cpt_podcasts: false,
 			is_cpt_glosario: false
 		}
 
@@ -58,8 +58,8 @@ class NofmMetadata extends Component{
 		let path;
 		if(postType==='post'){
 			path = `/wp/v2/posts/${this.props.postId}`; 
-		}else if(postType==='episodios'){
-			path = `/wp/v2/episodios/${this.props.postId}`;
+		}else if(postType==='podcasts'){
+			path = `/wp/v2/podcasts/${this.props.postId}`;
 		}else if(postType==='programas'){
 			path = `/wp/v2/programas/${this.props.postId}`;
 		}else if(postType==='glosario'){
@@ -80,17 +80,17 @@ class NofmMetadata extends Component{
 							key:'_id_vimeo',
 							value: data.meta._id_vimeo
 						},
-						_episodio_duration: {
-							key: '_episodio_duration',
-							value: data.meta._episodio_duration
+						_podcasts_duration: {
+							key: '_podcasts_duration',
+							value: data.meta._podcasts_duration
 						},
-						_episodio_url: {
-							key: '_episodio_url',
-							value: data.meta._episodio_url
+						_podcasts_url: {
+							key: '_podcasts_url',
+							value: data.meta._podcasts_url
 						},
-						_episodio_show:{
-							key: '_episodio_show',
-							value: data.meta._episodio_show
+						_podcasts_show:{
+							key: '_podcasts_show',
+							value: data.meta._podcasts_show
 						},
 						_prog_horario_dias:{
 							key: '_prog_horario_dias',
@@ -118,26 +118,26 @@ class NofmMetadata extends Component{
 			if(!this.state.is_pt_post){
 				this.setState({
 					is_pt_post: true,
-					is_cpt_episodios: false,
-					is_cpt_programs: false,
+					is_cpt_podcasts: false,
+					is_cpt_programas: false,
 					is_cpt_glosario: false
 				});
 			}
-		}else if(getCurrentPostType() === 'episodios'){
-			if(!this.state.is_cpt_episodios){
+		}else if(getCurrentPostType() === 'podcasts'){
+			if(!this.state.is_cpt_podcasts){
 				this.setState({
 					is_pt_post: false,
-					is_cpt_episodios: true,
-					is_cpt_programs: false,
+					is_cpt_podcasts: true,
+					is_cpt_programas: false,
 					is_cpt_glosario: false
 				});
 			}
 		}else if(getCurrentPostType() === 'programas'){
-			if(!this.state.is_cpt_programs){
+			if(!this.state.is_cpt_programas){
 				this.setState({
 					is_pt_post: false,
-					is_cpt_episodios: false,
-					is_cpt_programs: true,
+					is_cpt_podcasts: false,
+					is_cpt_programas: true,
 					is_cpt_glosario: false
 				});
 			}
@@ -145,8 +145,8 @@ class NofmMetadata extends Component{
 			if(!this.state.is_cpt_glosario){
 				this.setState({
 					is_pt_post: false,
-					is_cpt_episodios: false,
-					is_cpt_programs: false,
+					is_cpt_podcasts: false,
+					is_cpt_programas: false,
 					is_cpt_glosario: true
 				});
 			}
@@ -199,8 +199,9 @@ class NofmMetadata extends Component{
 	}//end get derived state from props
 
 	render(){
-		const {is_pt_post, is_cpt_programs, is_cpt_episodios, is_cpt_glosario, programas} = this.state;
+		const {is_pt_post, is_cpt_programas, is_cpt_podcasts, is_cpt_glosario, programas} = this.state;
 		let metabox_render;
+
 		// console.log(this.state);
 		if(is_pt_post){
 			metabox_render = (
@@ -211,17 +212,17 @@ class NofmMetadata extends Component{
 					<input type="text" name="_id_vimeo" value={this.state._id_vimeo.value} onChange={this.handleInputValue} /><br/>
 				</PanelBody>
 			);
-		}else if(is_cpt_episodios||is_cpt_glosario){
+		}else if(is_cpt_podcasts||is_cpt_glosario){
 			metabox_render = (
 				<PanelBody>
-					<label for="_episodio_duration">Duración del episodio</label><br/>
-					<input type="text" name="_episodio_duration" value={this.state._episodio_duration.value} onChange={this.handleInputValue} /><br/>
+					<label for="_podcasts_duration">Duración del podcast</label><br/>
+					<input type="text" name="_podcasts_duration" value={this.state._podcasts_duration.value} onChange={this.handleInputValue} /><br/>
 
-					<label for="_episodio_url">Url del episodio</label><br/>
-					<input type="text" name="_episodio_url" value={this.state._episodio_url.value} onChange={this.handleInputValue} /><br/>
+					<label for="_podcasts_url">Url del podcast</label><br/>
+					<input type="text" name="_podcasts_url" value={this.state._podcasts_url.value} onChange={this.handleInputValue} /><br/>
 
 					<label>Programa al que pertenece</label><br/>
-					<select name="_episodio_show" onChange={this.handleSelectValue} value={this.state._episodio_show.value}>
+					<select name="_podcasts_show" onChange={this.handleSelectValue} value={this.state._podcasts_show.value}>
 						<option value="">Sin programa</option>
 						{
 							programas.map(programa=>{
@@ -233,7 +234,7 @@ class NofmMetadata extends Component{
 					</select>
 				</PanelBody>
 			);
-		}else if(is_cpt_programs){
+		}else if(is_cpt_programas){
 			metabox_render = (
 				<PanelBody>
 					<label for="_prog_horario_dias">Horario del programa</label><br/>
