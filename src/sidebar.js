@@ -154,7 +154,7 @@ class NofmMetadata extends Component{
 
 		//Getting posts from programas CPT
 		wp.apiFetch({
-			path: 'wp/v2/programas/',
+			path: 'wp/v2/programas/?per_page=35',
 			method: 'GET'
 		})
 		.then(response=>{
